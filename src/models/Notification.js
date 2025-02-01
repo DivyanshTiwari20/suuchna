@@ -1,18 +1,15 @@
 import mongoose from 'mongoose';
 
 const notificationSchema = new mongoose.Schema({
-  title: {
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  target: {
     type: String,
-    required: true
+    enum: ['all', 'specific'],
+    default: 'all'
   },
-  content: {
-    type: String,
-    required: true
-  },
-  date: {
-    type: Date,
-    default: Date.now
-  }
+  departments: [{ type: String }],
+  createdAt: { type: Date, default: Date.now }
 });
 
 export default mongoose.model('Notification', notificationSchema);
