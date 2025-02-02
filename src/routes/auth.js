@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -30,19 +31,44 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Login route
+// auth.js routes
 router.post('/login', async (req, res) => {
-  const { roleNumber, password } = req.body;
-
   try {
-    const user = await User.findOne({ roleNumber });
+    const user = await User.findOne({ roleNumber: req.body.roleNumber });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { 
+      expiresIn: '1h' 
+    });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        role: user.role,
+        name: user.name,
+        department: user.department,
+        roleNumber: user.roleNumber
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Add this me endpoint
+router.get('/me', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .select('-password')
+      .lean();
+      
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    
+    res.json(user);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
