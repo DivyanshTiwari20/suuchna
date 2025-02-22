@@ -4,7 +4,7 @@
   "description": "��#\u0000 \u0000s\u0000u\u0000u\u0000c\u0000h\u0000n\u0000a\u0000\r\u0000 \u0000",
   "main": "index.js",
   "scripts": {
-   "start": "npx nodemon server.js"
+    "start": "npx nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.5"
+    "mongoose": "^8.9.5",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
